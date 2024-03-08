@@ -1,32 +1,57 @@
 const express = require('express');
 const http = require('http');
-const WebSocket = require('ws');
-const path = require('path'); // Importa el módulo 'path'
+const socketIO = require('socket.io');
 
 const app = express();
 const server = http.createServer(app);
-const wss = new WebSocket.Server({ server });
+const io = socketIO(server);
 
-// Configura Express para servir archivos estáticos desde la carpeta 'public'
-app.use(express.static(path.join(__dirname, 'public')));
+app.use(express.static('public'));
 
-wss.on('connection', (ws) => {
-    ws.on('message', (message) => {
-        // Lógica para procesar el mensaje y enviar una respuesta
-        const response = generarRespuesta(message);
-        ws.send(response);
-    });
+io.on('connection', (socket) => {
+  console.log('Cliente conectado');
+
+  // Interacción 1
+  socket.on('interaccion1', (data) => {
+    console.log('Interacción 1:', data);
+    // Respuesta del bot para la Interacción 1
+    socket.emit('respuesta', '¿Cómo estás hoy?');
+  });
+
+  // Interacción 2
+  socket.on('interaccion2', (data) => {
+    console.log('Interacción 2:', data);
+    // Respuesta del bot para la Interacción 2
+    socket.emit('respuesta', '¿Qué estás haciendo en este momento?');
+  });
+
+  // Interacción 3
+  socket.on('interaccion3', (data) => {
+    console.log('Interacción 3:', data);
+    // Respuesta del bot para la Interacción 3
+    socket.emit('respuesta', 'Cuéntame más sobre ti.');
+  });
+
+  // Interacción 4
+  socket.on('interaccion4', (data) => {
+    console.log('Interacción 4:', data);
+    // Respuesta del bot para la Interacción 4
+    socket.emit('respuesta', '¿Tienes algún pasatiempo favorito?');
+  });
+
+  // Interacción 5
+  socket.on('interaccion5', (data) => {
+    console.log('Interacción 5:', data);
+    // Respuesta del bot para la Interacción 5
+    socket.emit('respuesta', '¿Has visitado algún lugar interesante recientemente?');
+  });
+
+  socket.on('disconnect', () => {
+    console.log('Cliente desconectado');
+  });
 });
 
-function generarRespuesta(message) {
-    // Lógica para generar la respuesta del bot
-    // ...
-
-    return `Recibí tu mensaje: "${message}"`;
-}
-
 const PORT = process.env.PORT || 3000;
-
 server.listen(PORT, () => {
-    console.log(`Servidor WebSocket en http://localhost:${PORT}`);
+  console.log(`Servidor en ejecución en http://localhost:${PORT}`);
 });
